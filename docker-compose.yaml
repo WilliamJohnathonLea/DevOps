@@ -38,3 +38,8 @@ services:
     ports:
       - "9090:9090"
 
+  go.metrics.service:
+    container_name: go_metrics
+    image: "metricsapp:latest"
+    ports:
+      - "2112:2112"
