@@ -39,7 +39,7 @@ services:
       - "9090:9090"
 
   synthetic-load-generator:
-    container_name: load-gen
+    container_name: load_gen
     image: omnition/synthetic-load-generator:1.0.25
     volumes:
       - ./load-generator/load-generator.json:/etc/load-generator.json
