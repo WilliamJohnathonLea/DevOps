@@ -38,3 +38,13 @@ services:
     ports:
       - "9090:9090"
 
+  synthetic-load-generator:
+    container_name: load-gen
+    image: omnition/synthetic-load-generator:1.0.25
+    volumes:
+      - ./load-generator/load-generator.json:/etc/load-generator.json
+    environment:
+      - TOPOLOGY_FILE=/etc/load-generator.json
+      - JAEGER_COLLECTOR_URL=http://tempo.service:14268
+    depends_on:
+      - tempo.service
