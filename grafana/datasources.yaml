@@ -4,6 +4,7 @@ datasources:
 - name: Prometheus
   type: prometheus
   access: proxy
+  uid: prometheus
   orgId: 1
   url: http://prometheus.service:9090
   basicAuth: false
@@ -13,6 +14,7 @@ datasources:
 - name: Tempo
   type: tempo
   access: proxy
+  uid: tempo
   orgId: 1
   url: http://tempo.service:3200
   basicAuth: false
@@ -20,13 +22,24 @@ datasources:
   version: 1
   editable: false
   apiVersion: 1
-  uid: tempo
+  jsonData:
+    nodeGraph:
+      enabled: true
+    lokiSearch:
+      datasourceUid: loki
 - name: Loki
   type: loki
   access: proxy
+  uid: loki
   orgId: 1
   url: http://loki.service:3100
   basicAuth: false
   isDefault: false
   version: 1
   editable: false
+  jsonData:
+    derivedFields:
+      - datasourceUid: tempo
+        matcherRegex: "traceId (\\w+)"
+        name: traceID
+        url: '$${__value.raw}'
