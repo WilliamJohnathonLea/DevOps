@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   grafana.service:
-    container_name: grafana_dashboard
+    container_name: grafana
     image: "grafana/grafana:latest"
     volumes:
       - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
@@ -13,18 +13,35 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
 
   tempo.service:
-    container_name: grafana_tempo
+    container_name: tempo
     image: "grafana/tempo:latest"
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
-      - ./grafana/tempo.yaml:/etc/tempo.yaml
-      - ./grafana/tempo-data:/tmp/tempo
+      - ./tempo/tempo.yaml:/etc/tempo.yaml
+      - ./tempo/tempo-data:/tmp/tempo
     ports:
       - "14268:14268" # jaeger ingest
       - "3200:3200"   # tempo
       - "4317:4317"   # otlp grpc
       - "4318:4318"   # otlp http
       - "9411:9411"   # zipkin
+
+  loki.service:
+    container_name: loki
+    image: "grafana/loki:latest"
+    command: [ "--config.file=/etc/loki.yaml" ]
+    volumes:
+      - ./loki/loki.yaml:/etc/loki.yaml
+    ports:
+      - "3100:3100"
+
+  promtail.service:
+    container_name: promtail
+    image: "grafana/promtail:latest"
+    command: [ "--config.file=/etc/promtail.yaml" ]
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail/promtail.yaml:/etc/promtail.yaml
 
   prometheus.service:
     container_name: prometheus
